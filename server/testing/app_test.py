@@ -6,6 +6,19 @@ from models import db, Plant
 class TestPlant:
     '''Flask application in app.py'''
 
+    def setup_method(self):
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
+            plant = Plant(
+                name="Test Plant",
+                image="test.jpg",
+                price=10.0,
+                is_in_stock=True
+            )
+            db.session.add(plant)
+            db.session.commit()
+
     def test_plant_by_id_get_route(self):
         '''has a resource available at "/plants/<int:id>".'''
         response = app.test_client().get('/plants/1')
@@ -22,12 +35,6 @@ class TestPlant:
 
     def test_plant_by_id_patch_route_updates_is_in_stock(self):
         '''returns JSON representing updated Plant object with "is_in_stock" = False at "/plants/<int:id>".'''
-        with app.app_context():
-            plant_1 = Plant.query.filter_by(id=1).first()
-            plant_1.is_in_stock = True
-            db.session.add(plant_1)
-            db.session.commit()
-            
         response = app.test_client().patch(
             '/plants/1',
             json = {

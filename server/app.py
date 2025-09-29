@@ -30,6 +30,7 @@ class Plants(Resource):
             name=data['name'],
             image=data['image'],
             price=data['price'],
+            is_in_stock=data.get('is_in_stock', True)
         )
 
         db.session.add(new_plant)
